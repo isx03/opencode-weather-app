@@ -29,6 +29,24 @@ https://api.open-meteo.com/v1/forecast?latitude=45.41117&longitude=-75.69812&cur
 bun init
 ```
 
+### Ejecutar
+
+```bash
+bun run index.ts
+```
+
+### Compilar
+
+```bash
+bun run build
+```
+
+Genera el binario `weather-cli` en la raíz del proyecto.
+
+### Configuración
+
+Las ciudades guardadas y la ciudad default se almacenan en `~/.config/weather-cli/config.json`.
+
 ### Ejemplo del menú
 Esta es la apariencia que deseamos crear
 
