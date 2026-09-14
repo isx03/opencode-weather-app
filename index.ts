@@ -1,10 +1,11 @@
-import { ApiError, getCurrentTemp, searchCity } from "./src/api";
+import { ApiError, getCurrentTemp, getForecast7Days, searchCity } from "./src/api";
 import { loadConfig, saveConfig } from "./src/config";
 import {
   closeInput,
   cyan,
   printCityList,
   printError,
+  printForecast7Days,
   printMenu,
   printMessage,
   printWeather,
@@ -34,6 +35,20 @@ async function showAllCitiesWeather(config: Config): Promise<void> {
   for (const city of config.cities) {
     try {
       printWeather(city, await getCurrentTemp(city, config.unit), config.unit);
+    } catch (err) {
+      printError(connectionError(city, err));
+    }
+  }
+}
+
+async function showAllCitiesForecast(config: Config): Promise<void> {
+  if (config.cities.length === 0) {
+    printMessage("No hay ciudades registradas. Agrega una con la opción 3.");
+    return;
+  }
+  for (const city of config.cities) {
+    try {
+      printForecast7Days(city, await getForecast7Days(city, config.unit), config.unit);
     } catch (err) {
       printError(connectionError(city, err));
     }
@@ -180,6 +195,9 @@ async function main(): Promise<void> {
           break;
         case "5":
           config = await setDefaultCity(config);
+          break;
+        case "6":
+          await showAllCitiesForecast(config);
           break;
         case "8":
           config = await toggleUnit(config);
