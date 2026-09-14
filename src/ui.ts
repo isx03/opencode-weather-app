@@ -4,7 +4,16 @@ import type { City, Unit } from "./types";
 const BOX = "═".repeat(40);
 const RESET = "\x1b[0m";
 const RED = "\x1b[31m";
+const GREEN = "\x1b[32m";
+const YELLOW = "\x1b[33m";
+const CYAN = "\x1b[36m";
 const BOLD = "\x1b[1m";
+
+const COLOR = process.stdout.isTTY && !process.env.NO_COLOR;
+
+function paint(code: string, text: string): string {
+  return COLOR ? `${code}${text}${RESET}` : text;
+}
 
 let buffer = "";
 let waiting: ((line: string) => void) | null = null;
@@ -36,6 +45,10 @@ function shiftLine(): string | null {
   return line;
 }
 
+export function cyan(text: string): string {
+  return paint(CYAN, text);
+}
+
 export function unitSymbol(unit: Unit): string {
   return unit === "celsius" ? "°C" : "°F";
 }
@@ -58,29 +71,29 @@ export function formatTemperature(value: number): string {
 }
 
 export function printMenu(cityCount: number, unit: Unit): void {
-  console.log(BOX);
-  console.log("         WEATHER CLI");
-  console.log(BOX);
-  console.log("  1. Clima de ciudad default");
-  console.log(`  2. Clima de todas las ciudades (${cityCount})`);
-  console.log("  3. Buscar y agregar ciudad");
-  console.log("  4. Eliminar ciudad");
-  console.log("  5. Establecer ciudad default");
-  console.log(`  8. Ajustes (${unitSymbol(unit)})`);
-  console.log("  9. Salir");
-  console.log(BOX);
+  console.log(paint(CYAN, BOX));
+  console.log(paint(CYAN, "         WEATHER CLI"));
+  console.log(paint(CYAN, BOX));
+  console.log(paint(CYAN, "  1. Clima de ciudad default"));
+  console.log(paint(CYAN, `  2. Clima de todas las ciudades (${cityCount})`));
+  console.log(paint(CYAN, "  3. Buscar y agregar ciudad"));
+  console.log(paint(CYAN, "  4. Eliminar ciudad"));
+  console.log(paint(CYAN, "  5. Establecer ciudad default"));
+  console.log(paint(CYAN, `  8. Ajustes (${unitSymbol(unit)})`));
+  console.log(paint(CYAN, "  9. Salir"));
+  console.log(paint(CYAN, BOX));
 }
 
 export function printWeather(city: City, temp: number, unit: Unit): void {
   const location = [city.name, city.country]
     .filter((x): x is string => Boolean(x))
     .join(", ");
-  console.log(BOX);
-  console.log(`  ${location}`);
+  console.log(paint(CYAN, BOX));
+  console.log(paint(CYAN, `  ${location}`));
   console.log(
-    `  Temperatura actual: ${BOLD}${formatTemperature(temp)} ${unitSymbol(unit)}${RESET}`,
+    `  Temperatura actual: ${paint(`${YELLOW}${BOLD}`, `${formatTemperature(temp)} ${unitSymbol(unit)}`)}`,
   );
-  console.log(BOX);
+  console.log(paint(CYAN, BOX));
 }
 
 export function printCityList(cities: City[]): void {
@@ -93,9 +106,9 @@ export function printCityList(cities: City[]): void {
 }
 
 export function printMessage(message: string): void {
-  console.log(`  ${message}`);
+  console.log(paint(GREEN, `  ${message}`));
 }
 
 export function printError(message: string): void {
-  console.log(`${RED}  ${message}${RESET}`);
+  console.log(paint(RED, `  ${message}`));
 }

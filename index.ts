@@ -2,6 +2,7 @@ import { ApiError, getCurrentTemp, searchCity } from "./src/api";
 import { loadConfig, saveConfig } from "./src/config";
 import {
   closeInput,
+  cyan,
   printCityList,
   printError,
   printMenu,
@@ -161,7 +162,7 @@ async function main(): Promise<void> {
 
   while (true) {
     printMenu(config.cities.length, config.unit);
-    const option = (await readInput("  Selecciona una opción: ")).trim();
+    const option = (await readInput(cyan("  Selecciona una opción: "))).trim();
 
     try {
       switch (option) {
