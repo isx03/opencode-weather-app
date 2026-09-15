@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - package.json
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Get version
+        id: version
+        run: |
+          VERSION=$(bun -e "console.log((await import('./package.json')).version)")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check tag doesn't exist
+        id: check_tag
+        run: |
+          TAG="v${{ steps.version.outputs.version }}"
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" > /dev/null 2>&1; then
+            echo "Tag $TAG already exists, skipping release"
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Tag $TAG does not exist, releasing"
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install dependencies
+        if: steps.check_tag.outputs.should_release == 'true'
+        run: bun install --frozen-lockfile
+
+      - name: Build binary
+        if: steps.check_tag.outputs.should_release == 'true'
+        run: bun run build
+
+      - name: Create release
+        if: steps.check_tag.outputs.should_release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: v${{ steps.version.outputs.version }}
+          files: weather-cli
+          generate_release_notes: true
