@@ -4,14 +4,20 @@ Weather CLI app built with Bun + TypeScript using the OpenMeteo API.
 
 ## Runtime & toolchain
 
-- **Runtime:** Bun (`bun run index.ts`)
+- **Runtime:** Bun (`bun run src/index.ts`)
 - **Module system:** ESM (`"type": "module"` in package.json), `"module": "Preserve"` in tsconfig
 - **TypeScript:** Strict mode enabled; `noEmit: true` (Bun runs TS directly, no build step)
 - **No lint/test/format config exists yet** — if you add tooling, keep it simple
 
 ## Key files
 
-- `index.ts` — sole entrypoint (currently a stub)
+- `src/index.ts` — entrypoint (CLI loop + dispatch)
+- `src/actions/` — user actions (add/remove cities, weather/forecast, settings)
+- `src/api/` — OpenMeteo HTTP integration (geocoding, forecast, shared fetcher)
+- `src/presentation/` — console interaction (menu, input, output)
+- `src/storage/` — persistence in `~/.config/weather-cli/config.json`
+- `src/types/` — shared TS contracts
+- `src/utils/` — colors, formatters, constants
 - `package.json` — `bun.lock` is the lockfile, not `package-lock.json`
 
 ## External APIs

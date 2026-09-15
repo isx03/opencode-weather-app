@@ -32,7 +32,7 @@ bun init
 ### Ejecutar
 
 ```bash
-bun run index.ts
+bun run src/index.ts
 ```
 
 ### Compilar

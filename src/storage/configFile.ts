@@ -1,7 +1,7 @@
 import { homedir } from "node:os";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { Config } from "./types";
+import type { Config } from "../types/Config";
 
 const CONFIG_DIR = join(homedir(), ".config", "weather-cli");
 const CONFIG_PATH = join(CONFIG_DIR, "config.json");
