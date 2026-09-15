@@ -3,8 +3,13 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { Config } from "../types/Config";
 
-const CONFIG_DIR = join(homedir(), ".config", "weather-cli");
-const CONFIG_PATH = join(CONFIG_DIR, "config.json");
+function configDir(): string {
+  return process.env.WEATHER_CLI_CONFIG_DIR ?? join(homedir(), ".config", "weather-cli");
+}
+
+function configPath(): string {
+  return join(configDir(), "config.json");
+}
 
 export const DEFAULT_CONFIG: Config = {
   defaultCity: null,
@@ -14,7 +19,7 @@ export const DEFAULT_CONFIG: Config = {
 
 export async function loadConfig(): Promise<Config> {
   try {
-    const raw = await readFile(CONFIG_PATH, "utf-8");
+    const raw = await readFile(configPath(), "utf-8");
     const parsed = JSON.parse(raw) as Partial<Config>;
     return { ...DEFAULT_CONFIG, ...parsed };
   } catch {
@@ -23,6 +28,6 @@ export async function loadConfig(): Promise<Config> {
 }
 
 export async function saveConfig(config: Config): Promise<void> {
-  await mkdir(CONFIG_DIR, { recursive: true });
-  await writeFile(CONFIG_PATH, JSON.stringify(config, null, 2), "utf-8");
+  await mkdir(configDir(), { recursive: true });
+  await writeFile(configPath(), JSON.stringify(config, null, 2), "utf-8");
 }
